@@ -2,6 +2,25 @@ import shortid from "shortid";
 
 export default (node) => {
   switch (node) {
+    case "INPUT":
+      return {
+        id: shortid.generate(),
+        type: "input",
+        data: {
+          label: "INPUT",
+          args: {
+            row: 1,
+            column: 1,
+            channel: 1,
+          },
+        },
+        sourcePosition: "right",
+        targetPosition: "left",
+        position: { x: 250, y: 25 },
+        connectable: true,
+        draggable: true,
+        selectable: true,
+      };
     case "CONV":
       return {
         id: shortid.generate(),

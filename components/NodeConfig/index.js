@@ -1,7 +1,9 @@
-import { Conv2d, MaxPool, Dense, Dropout, Flatten } from "./layer_forms";
+import { Conv2d, MaxPool, Dense, Dropout, Flatten, Input } from "./layer_forms";
 
 export default ({ node }) => {
   switch (node.data.label) {
+    case "INPUT":
+      return <Input node={node} />;
     case "CONV":
       return <Conv2d node={node} />;
     case "POOL":

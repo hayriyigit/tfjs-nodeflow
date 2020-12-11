@@ -7,24 +7,7 @@ import NodeConfig from "../components/NodeConfig/index";
 import { modelMapper } from "../utils/model-mapper";
 
 export default () => {
-  const [elements, setElements] = useState([
-    {
-      id: "input",
-      type: "input",
-      data: {
-        label: "INPUT",
-        args: {
-          shape: [24, 24, 1],
-        },
-      },
-      sourcePosition: "right",
-      targetPosition: "left",
-      position: { x: 250, y: 25 },
-      connectable: true,
-      draggable: true,
-      selectable: true,
-    },
-  ]);
+  const [elements, setElements] = useState([]);
   const [configMenu, setConfigMenu] = useState(false);
   const [nodeMenu, setNodeMenu] = useState(false);
   const [node, setNode] = useState(null);
@@ -45,7 +28,7 @@ export default () => {
     setElements((els) => removeElements(elementsToRemove, els));
   const onConnect = (params) =>
     setElements((els) => {
-      params.type = "straight";
+      params.type = "smoothstep";
       return addEdge(params, els);
     });
   const addNode = (e) => {
@@ -67,6 +50,9 @@ export default () => {
       </div>
 
       <div className={nodeMenu ? "node__menu active" : "node__menu"}>
+        <button type="button" name="INPUT" onClick={addNode} class="btn btn-lg">
+          INPUT
+        </button>
         <button
           type="button"
           name="CONV"
