@@ -9,6 +9,11 @@ export default ({ node }) => {
     node.data.args.row = parseInt(data.row);
     node.data.args.column = parseInt(data.column);
     node.data.args.channel = parseInt(data.channel);
+    node.data.args.shape = [
+      parseInt(data.row),
+      parseInt(data.column),
+      parseInt(data.channel),
+    ];
     updateElement(node);
   };
 

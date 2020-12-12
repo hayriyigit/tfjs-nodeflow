@@ -12,6 +12,7 @@ export default (node) => {
             row: 1,
             column: 1,
             channel: 1,
+            shape: [1, 1, 1],
           },
         },
         sourcePosition: "right",
