@@ -59,7 +59,7 @@ export default (node) => {
             poolSize: 1,
             strides: 1,
             padding: "valid",
-            dataFormat: "channelFirst",
+            dataFormat: "channelsFirst",
           },
         },
         sourcePosition: "right",

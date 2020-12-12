@@ -1,14 +1,15 @@
 import * as tf from "@tensorflow/tfjs";
-import { models } from "@tensorflow/tfjs";
+import { input } from "@tensorflow/tfjs";
 
 export const modelMapper = (graph) => {
   const edges = graph.filter((node) => node.id.startsWith("reactflow__edge"));
   const nodes = graph.filter((node) => !node.id.startsWith("reactflow__edge"));
-  const inputNode = graph.filter((node) => node.type == "input");
+  const inputNode = graph.filter((node) => node.type == "input")[0].id;
 
   const tree = nodes.reduce((acc, current) => {
     acc[current.id] = {
       id: current.id,
+      type: current.data.label,
       childs: [],
       parents: [],
       args: nodes.filter((node) => node.id == current.id)[0].data.args,
@@ -28,25 +29,27 @@ export const modelMapper = (graph) => {
     return acc;
   }, {});
 
-  console.log(tree);
-  createModel(tree);
+  createModel(tree, inputNode);
 };
 
-const createModel = (tree) => {
-  window["input"] = tf.input({ shape: tree.input.args.shape });
+const createModel = (tree, inputNode) => {
+  console.log(tree);
+  window[String(inputNode)] = tf.input({
+    shape: tree[inputNode].args.shape,
+  });
 
-  let childs = tree.input.childs;
+  let childs = tree[inputNode].childs;
 
   createLayers(childs, tree);
-
   const outputs = createOutputs(tree).reduce((acc, curr) => {
     acc.push(window[String(curr)]);
     return acc;
   }, []);
 
-  // console.log(outputs);
-
-  const model = tf.model({ inputs: input, outputs: outputs });
+  const model = tf.model({
+    inputs: window[String(inputNode)],
+    outputs: outputs,
+  });
 
   model.summary();
 };
@@ -58,11 +61,8 @@ const createLayers = (childs, tree) => {
     return;
   }
   childs.map((child) => {
-    console.log(childs);
     if (tree[child].parents.length == 1) {
-      window[String(child)] = tf.layers
-        .conv2d(tree[child].args)
-        .apply(window[String(tree[child].parents[0])]);
+      window[String(child)] = createLayer(child, tree[child].type, tree);
 
       console.log("LAYER ADDED: ", child);
 
@@ -97,12 +97,40 @@ const createLayers = (childs, tree) => {
   createLayers(childs_copy, tree);
 };
 
+const createLayer = (child, type, tree) => {
+  switch (type) {
+    case "CONV":
+      return tf.layers
+        .conv2d(tree[child].args)
+        .apply(window[String(tree[child].parents[0])]);
+    case "POOL":
+      return tf.layers
+        .maxPooling2d(tree[child].args)
+        .apply(window[String(tree[child].parents[0])]);
+
+    case "DENSE":
+      return tf.layers
+        .dense(tree[child].args)
+        .apply(window[String(tree[child].parents[0])]);
+
+    case "DROPOUT":
+      return tf.layers
+        .dropout(tree[child].args)
+        .apply(window[String(tree[child].parents[0])]);
+
+    case "FLATTEN":
+      return tf.layers
+        .flatten(tree[child].args)
+        .apply(window[String(tree[child].parents[0])]);
+  }
+};
+
 const createOutputs = (tree) => {
   let outputs = [];
 
   Object.keys(tree).map((key) => {
     tree[key].childs.length < 1 ? outputs.push(key) : null;
   });
-
+  console.log(outputs);
   return outputs;
 };
