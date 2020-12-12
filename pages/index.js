@@ -1,19 +1,38 @@
 import React, { useState, useEffect, useContext } from "react";
 import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
+import { useSocket } from "../hooks";
 import { ElementsContext } from "../contexts/ElementsContext";
 
 import NodeElements from "../node-elements/";
 import NodeConfig from "../components/NodeConfig/index";
 
-import { modelMapper } from "../utils/model-mapper";
-import { add } from "@tensorflow/tfjs";
-
 export default () => {
+  const socket = useSocket("http://localhost:8001", {
+    reconnectionDelay: 300,
+    reconnectionDelayMax: 300,
+  });
   const { elements, setElements, addElement } = useContext(ElementsContext);
 
   const [configMenu, setConfigMenu] = useState(false);
   const [nodeMenu, setNodeMenu] = useState(false);
   const [node, setNode] = useState(null);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("compailed", ({ status, message }) => {
+        console.log("Model Compailed");
+        console.log("Status: ", status);
+        console.log("Message: ", message);
+
+        // setCompailStatus({ status, message });
+      });
+
+      socket.on("onEpochEnd", (data) => {
+        console.log(trainLogs);
+        // setTrainLogs([...trainLogs, data]);
+      });
+    }
+  }, [socket]);
 
   useEffect(() => {
     const initialNode = {
@@ -41,7 +60,6 @@ export default () => {
   }, []);
 
   const handleClick = () => setConfigMenu(!configMenu);
-  const closeConfigMenu = () => setConfigMenu(false);
 
   const onElementClick = async (event, element) => {
     if (
@@ -135,7 +153,7 @@ export default () => {
         <button
           type="button"
           name="COMPILE"
-          onClick={() => modelMapper(elements)}
+          onClick={() => socket.emit("compileModel", elements)}
           class="btn btn-lg btn-warning"
         >
           COMPILE
