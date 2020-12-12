@@ -9,13 +9,7 @@ import { modelMapper } from "../utils/model-mapper";
 import { add } from "@tensorflow/tfjs";
 
 export default () => {
-  const {
-    elements,
-    setElements,
-    addElement,
-    updateElement,
-    deleteElement,
-  } = useContext(ElementsContext);
+  const { elements, setElements, addElement } = useContext(ElementsContext);
 
   const [configMenu, setConfigMenu] = useState(false);
   const [nodeMenu, setNodeMenu] = useState(false);
@@ -29,7 +23,6 @@ export default () => {
   const onElementClick = async (event, element) => {
     if (!element.id.startsWith("reactflow__edge")) {
       (!configMenu || node.id == element.id || !node) && handleClick();
-      console.log(elements);
       setNode(element);
       setNodeMenu(nodeMenu && false);
     }
@@ -106,7 +99,14 @@ export default () => {
         >
           DENSE
         </button>
-
+        <button
+          type="button"
+          name="CONCAT"
+          onClick={addNode}
+          class="btn btn-lg btn-info"
+        >
+          CONCAT
+        </button>
         <button
           type="button"
           name="COMPILE"

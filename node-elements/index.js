@@ -146,5 +146,25 @@ export default (node) => {
           borderRadius: 0,
         },
       };
+    case "CONCAT":
+      return {
+        id: shortid.generate(),
+        data: {
+          label: "CONCAT",
+        },
+        sourcePosition: "right",
+        targetPosition: "left",
+        position: { x: 450, y: 450 },
+        connectable: true,
+        draggable: true,
+        selectable: true,
+        style: {
+          background: "#B4A7D6",
+          color: "#000",
+          border: "1px solid #000",
+          width: 100,
+          borderRadius: 0,
+        },
+      };
   }
 };
