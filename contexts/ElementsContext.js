@@ -3,7 +3,21 @@ import { createContext, useState } from "react";
 const ElementsContext = createContext();
 
 const ElementsProvider = ({ children }) => {
-  const [elements, setElements] = useState([]);
+  const [elements, setElements] = useState([
+    {
+      id: "input_1",
+      type: "input",
+      data: {
+        label: "INPUT",
+        args: {
+          row: 1,
+          column: 1,
+          channel: 1,
+          shape: [1, 1, 1],
+        },
+      },
+    },
+  ]);
 
   const addElement = (newElement) => {
     try {

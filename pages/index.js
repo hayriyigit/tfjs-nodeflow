@@ -59,9 +59,6 @@ export default () => {
       </div>
 
       <div className={nodeMenu ? "node__menu active" : "node__menu"}>
-        <button type="button" name="INPUT" onClick={addNode} class="btn btn-lg">
-          INPUT
-        </button>
         <button
           type="button"
           name="CONV"
