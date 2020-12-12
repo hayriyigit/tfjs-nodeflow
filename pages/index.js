@@ -15,7 +15,30 @@ export default () => {
   const [nodeMenu, setNodeMenu] = useState(false);
   const [node, setNode] = useState(null);
 
-  useEffect(() => {}, [node]);
+  useEffect(() => {
+    const initialNode = {
+      id: "input_1",
+      type: "input",
+      data: {
+        label: "INPUT",
+        args: {
+          row: 1,
+          column: 1,
+          channel: 1,
+          shape: [1, 1, 1],
+        },
+      },
+      connectable: true,
+      draggable: true,
+      position: {
+        x: 250,
+        y: 25,
+      },
+      sourcePosition: "right",
+    };
+
+    addElement(initialNode);
+  }, []);
 
   const handleClick = () => setConfigMenu(!configMenu);
   const closeConfigMenu = () => setConfigMenu(false);
@@ -26,6 +49,7 @@ export default () => {
       element.data.label != "CONCAT"
     ) {
       (!configMenu || node.id == element.id || !node) && handleClick();
+
       setNode(element);
       setNodeMenu(nodeMenu && false);
     }
@@ -42,6 +66,7 @@ export default () => {
   const addNode = (e) => {
     const newElement = NodeElements(e.target.name);
     addElement(newElement);
+    console.log(elements);
   };
 
   return (
