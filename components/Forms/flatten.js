@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ElementsContext } from "../../../contexts/ElementsContext";
+import { ElementsContext } from "../../contexts/ElementsContext";
 import { useForm } from "react-hook-form";
 
 const dataFormat = ["channelsFirst", "channelsLast"];

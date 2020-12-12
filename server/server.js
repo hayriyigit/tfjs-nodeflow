@@ -18,14 +18,28 @@ server.listen(PORT, () => {
 io.on("connection", (socket) => {
   socket.on("compileModel", async (data) => {
     try {
-      model = modelMapper(data);
-      model.compile({ optimizer: "sgd", loss: "categoricalCrossentropy" });
+      model.compile(data);
       socket.emit("compailed", {
         status: true,
         message: "Model compailed succesfully",
       });
     } catch (e) {
       socket.emit("compailed", {
+        status: false,
+        message: `Error: ${e.message}`,
+      });
+    }
+  });
+
+  socket.on("createModel", async (data) => {
+    try {
+      model = modelMapper(data);
+      socket.emit("created", {
+        status: true,
+        message: "Model created succesfully",
+      });
+    } catch (e) {
+      socket.emit("created", {
         status: false,
         message: `Error: ${e.message}`,
       });
@@ -50,7 +64,7 @@ io.on("connection", (socket) => {
       .sub(trainMin)
       .div(trainMax.sub(trainMin));
     const normalizedTest = testImages.sub(testMin).div(testMax.sub(testMin));
-    const lastModel = model.getModel();
+    const lastModel = model;
 
     await lastModel.fit(normalizedTrain, trainLabels, {
       batchSize: data.batchSize,

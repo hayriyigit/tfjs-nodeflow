@@ -4,7 +4,7 @@ import { useSocket } from "../hooks";
 import { ElementsContext } from "../contexts/ElementsContext";
 
 import NodeElements from "../node-elements/";
-import NodeConfig from "../components/NodeConfig/index";
+import Forms from "../components/Forms";
 
 export default () => {
   const socket = useSocket("http://localhost:8001", {
@@ -13,22 +13,34 @@ export default () => {
   });
   const { elements, setElements, addElement } = useContext(ElementsContext);
 
+  const [createStatus, setCreateStatus] = useState(false);
+  const [compileStatus, setCompileStatus] = useState(false);
   const [configMenu, setConfigMenu] = useState(false);
   const [nodeMenu, setNodeMenu] = useState(false);
   const [node, setNode] = useState(null);
 
   useEffect(() => {
     if (socket) {
-      socket.on("compailed", ({ status, message }) => {
-        console.log("Model Compailed");
+      socket.on("created", ({ status, message }) => {
+        console.log("Model Create Status");
         console.log("Status: ", status);
         console.log("Message: ", message);
+        setCreateStatus(status);
+        setConfigMenu(true);
+        if (status) setNode({ data: { label: "COMPILE" } });
+      });
 
-        // setCompailStatus({ status, message });
+      socket.on("compailed", ({ status, message }) => {
+        console.log("Model Compile Status");
+        console.log("Status: ", status);
+        console.log("Message: ", message);
+        setCompileStatus(status);
+        setConfigMenu(true);
+        if (status) setNode({ data: { label: "TRAIN" } });
       });
 
       socket.on("onEpochEnd", (data) => {
-        console.log(trainLogs);
+        console.log(data);
         // setTrainLogs([...trainLogs, data]);
       });
     }
@@ -84,7 +96,6 @@ export default () => {
   const addNode = (e) => {
     const newElement = NodeElements(e.target.name);
     addElement(newElement);
-    console.log(elements);
   };
 
   return (
@@ -98,10 +109,13 @@ export default () => {
       />
 
       <div className={configMenu ? "config__menu active" : "config__menu"}>
-        {node ? <NodeConfig node={node} /> : null}
+        {node ? <Forms node={node} socket={socket} /> : null}
       </div>
 
-      <div className={nodeMenu ? "node__menu active" : "node__menu"}>
+      <div
+        className={nodeMenu ? "node__menu active" : "node__menu"}
+        style={{ display: createStatus ? "none" : "flex" }}
+      >
         <button
           type="button"
           name="CONV"
@@ -153,10 +167,10 @@ export default () => {
         <button
           type="button"
           name="COMPILE"
-          onClick={() => socket.emit("compileModel", elements)}
+          onClick={() => socket.emit("createModel", elements)}
           class="btn btn-lg btn-warning"
         >
-          COMPILE
+          CREATE
         </button>
 
         <button
