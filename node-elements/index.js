@@ -158,7 +158,7 @@ export default (node) => {
         position: { x: 450, y: 450 },
         connectable: true,
         draggable: true,
-        selectable: true,
+        selectable: false,
         style: {
           background: "#B4A7D6",
           color: "#000",

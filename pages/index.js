@@ -21,7 +21,10 @@ export default () => {
   const closeConfigMenu = () => setConfigMenu(false);
 
   const onElementClick = async (event, element) => {
-    if (!element.id.startsWith("reactflow__edge")) {
+    if (
+      !element.id.startsWith("reactflow__edge") &&
+      element.data.label != "CONCAT"
+    ) {
       (!configMenu || node.id == element.id || !node) && handleClick();
       setNode(element);
       setNodeMenu(nodeMenu && false);
