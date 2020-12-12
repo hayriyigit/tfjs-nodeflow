@@ -1,4 +1,5 @@
-import React from "react";
+import { useContext } from "react";
+import { ElementsContext } from "../../../contexts/ElementsContext";
 import { useForm } from "react-hook-form";
 
 const activation = [
@@ -27,9 +28,11 @@ const kernelInitializer = [
 ];
 
 export default ({ node }) => {
+  const { updateElement } = useContext(ElementsContext);
   const { register, handleSubmit, watch, errors } = useForm();
   const onSubmit = (data) => {
-    data.units = parseInt(data.units);
+    node.data.args.units = parseInt(data.units);
+    updateElement(node);
   };
 
   return (

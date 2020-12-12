@@ -1,4 +1,5 @@
-import React from "react";
+import { useContext } from "react";
+import { ElementsContext } from "../../../contexts/ElementsContext";
 import { useForm } from "react-hook-form";
 
 const padding = ["valid", "same", "causal"];
@@ -27,11 +28,14 @@ const kernelInitializer = [
 ];
 
 export default ({ node }) => {
+  const { updateElement } = useContext(ElementsContext);
   const { register, handleSubmit, watch, errors } = useForm();
   const onSubmit = (data) => {
-    data.kernelSize = parseInt(data.kernelSize);
-    data.filters = parseInt(data.filters);
-    data.strides = parseInt(data.strides);
+    node.data.args.kernelSize = parseInt(data.kernelSize);
+    node.data.args.filters = parseInt(data.filters);
+    node.data.args.strides = parseInt(data.strides);
+
+    updateElement(node);
   };
 
   return (

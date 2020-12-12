@@ -1,10 +1,13 @@
-import React from "react";
+import { useContext } from "react";
+import { ElementsContext } from "../../../contexts/ElementsContext";
 import { useForm } from "react-hook-form";
 
 export default ({ node }) => {
+  const { updateElement } = useContext(ElementsContext);
   const { register, handleSubmit, watch, errors } = useForm();
   const onSubmit = (data) => {
-    data.rate = parseFloat(data.rate);
+    node.data.args.rate = parseFloat(data.rate);
+    updateElement(node);
   };
 
   return (

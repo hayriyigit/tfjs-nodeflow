@@ -1,14 +1,17 @@
-import React from "react";
+import { useContext } from "react";
+import { ElementsContext } from "../../../contexts/ElementsContext";
 import { useForm } from "react-hook-form";
 
 const padding = ["valid", "same", "causal"];
 const dataFormat = ["channelsFirst", "channelsLast"];
 
 export default ({ node }) => {
+  const { updateElement } = useContext(ElementsContext);
   const { register, handleSubmit, watch, errors } = useForm();
   const onSubmit = (data) => {
-    data.poolSize = parseInt(data.poolSize);
-    data.strides = parseInt(data.strides);
+    node.data.args.poolSize = parseInt(data.poolSize);
+    node.data.args.strides = parseInt(data.strides);
+    updateElement(node);
   };
 
   return (

@@ -1,11 +1,16 @@
-import React from "react";
+import { useContext } from "react";
+import { ElementsContext } from "../../../contexts/ElementsContext";
 import { useForm } from "react-hook-form";
 
 const dataFormat = ["channelsFirst", "channelsLast"];
 
 export default ({ node }) => {
+  const { updateElement } = useContext(ElementsContext);
   const { register, handleSubmit, watch, errors } = useForm();
-  const onSubmit = (data) => {};
+  const onSubmit = (data) => {
+    node.data.args.dataFormat = data.dataFormat;
+    updateElement(node);
+  };
 
   return (
     <div className="col border p-3 border-danger rounded-lg bg-light">

@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
+import { ElementsContext } from "../contexts/ElementsContext";
 
 import NodeElements from "../node-elements/";
 import NodeConfig from "../components/NodeConfig/index";
 
 import { modelMapper } from "../utils/model-mapper";
+import { add } from "@tensorflow/tfjs";
 
 export default () => {
-  const [elements, setElements] = useState([]);
+  const {
+    elements,
+    setElements,
+    addElement,
+    updateElement,
+    deleteElement,
+  } = useContext(ElementsContext);
+
   const [configMenu, setConfigMenu] = useState(false);
   const [nodeMenu, setNodeMenu] = useState(false);
   const [node, setNode] = useState(null);
@@ -20,19 +29,23 @@ export default () => {
   const onElementClick = async (event, element) => {
     if (!element.id.startsWith("reactflow__edge")) {
       (!configMenu || node.id == element.id || !node) && handleClick();
+      console.log(elements);
       setNode(element);
       setNodeMenu(nodeMenu && false);
     }
   };
   const onElementsRemove = (elementsToRemove) =>
     setElements((els) => removeElements(elementsToRemove, els));
+
   const onConnect = (params) =>
     setElements((els) => {
       params.type = "smoothstep";
       return addEdge(params, els);
     });
+
   const addNode = (e) => {
-    setElements([...elements, NodeElements(e.target.name)]);
+    const newElement = NodeElements(e.target.name);
+    addElement(newElement);
   };
 
   return (
