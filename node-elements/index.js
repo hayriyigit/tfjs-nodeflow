@@ -96,8 +96,7 @@ export default (node) => {
           background: "#6D9EEB",
           color: "#000",
           border: "1px solid #000",
-          width: 25,
-          height: 100,
+          width: 100,
           borderRadius: 0,
         },
       };
