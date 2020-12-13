@@ -70,7 +70,7 @@ const createLayers = (childs, tree) => {
     } else {
       try {
         const parents = tree[child].parents.reduce((acc, curr) => {
-          acc.push(gloabal[String(curr)]);
+          acc.push(global[String(curr)]);
           return acc;
         }, []);
 

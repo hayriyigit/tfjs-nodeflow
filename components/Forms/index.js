@@ -8,7 +8,6 @@ import Compile from "./compile";
 import TrainModel from "./train-model";
 
 export default ({ node, socket }) => {
-  console.log(node);
   switch (node.data.label) {
     case "INPUT":
       return <Input node={node} />;

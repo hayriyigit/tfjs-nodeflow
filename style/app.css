@@ -11,6 +11,7 @@
 }
 
 .config__menu {
+  display: flex;
   position: absolute;
   width: 40%;
   height: 100%;
@@ -30,6 +31,7 @@
 }
 
 .node__menu {
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
@@ -46,9 +48,18 @@
   transition: all 0.6s ease-in-out;
 }
 
+.node__menu.chart {
+  bottom: 0;
+  opacity: 1;
+  height: 50% !important;
+  transition: all 0.6s ease-in-out;
+  z-index: 98;
+}
+
 .node__menu.active {
   bottom: 0;
   opacity: 1;
+
   transition: all 0.6s ease-in-out;
   z-index: 98;
 }

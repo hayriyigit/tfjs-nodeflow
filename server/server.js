@@ -74,7 +74,17 @@ io.on("connection", (socket) => {
       validationSplit: 0.2,
       callbacks: {
         onEpochEnd: async (epochs, logs) => {
-          socket.emit("onEpochEnd", { epochs, logs });
+          let loss = 0;
+          let val_loss = 0;
+          try {
+            loss = Number(logs.loss.toFixed(3));
+            val_loss = Number(logs.val_loss.toFixed(3));
+          } catch (err) {
+            console.error(err);
+          }
+          const result = { val_loss, loss };
+          console.log(result);
+          socket.emit("onEpochEnd", { epochs, result });
         },
       },
     });

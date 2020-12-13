@@ -5,13 +5,21 @@ import { ElementsContext } from "../contexts/ElementsContext";
 
 import NodeElements from "../node-elements/";
 import Forms from "../components/Forms";
+import Chart from "../components/Chart";
+import NodeButtons from "../components/NodeButtons";
 
 export default () => {
   const socket = useSocket("http://localhost:8001", {
     reconnectionDelay: 300,
     reconnectionDelayMax: 300,
   });
-  const { elements, setElements, addElement } = useContext(ElementsContext);
+  const {
+    elements,
+    setElements,
+    addElement,
+    trainStatus,
+    updateMetric,
+  } = useContext(ElementsContext);
 
   const [createStatus, setCreateStatus] = useState(false);
   const [compileStatus, setCompileStatus] = useState(false);
@@ -40,8 +48,7 @@ export default () => {
       });
 
       socket.on("onEpochEnd", (data) => {
-        console.log(data);
-        // setTrainLogs([...trainLogs, data]);
+        updateMetric(data);
       });
     }
   }, [socket]);
@@ -98,6 +105,11 @@ export default () => {
     addElement(newElement);
   };
 
+  const nodeMenuSwitch = () => {
+    if (trainStatus) return "node__menu chart";
+    else if (nodeMenu) return "node__menu active";
+    else return "node__menu";
+  };
   return (
     <div className="main">
       <ReactFlow
@@ -112,67 +124,12 @@ export default () => {
         {node ? <Forms node={node} socket={socket} /> : null}
       </div>
 
-      <div
-        className={nodeMenu ? "node__menu active" : "node__menu"}
-        style={{ display: createStatus ? "none" : "flex" }}
-      >
-        <button
-          type="button"
-          name="CONV"
-          onClick={addNode}
-          class="btn btn-lg btn-primary"
-        >
-          CONV2D
-        </button>
-        <button
-          type="button"
-          name="DROPOUT"
-          onClick={addNode}
-          class="btn btn-lg btn-danger"
-        >
-          DROPOUT
-        </button>
-        <button
-          type="button"
-          name="POOL"
-          onClick={addNode}
-          class="btn btn-lg btn-success"
-        >
-          MAX POOLING
-        </button>
-        <button
-          type="button"
-          name="FLATTEN"
-          onClick={addNode}
-          class="btn btn-lg btn-info"
-        >
-          FLATTEN
-        </button>
-        <button
-          type="button"
-          name="DENSE"
-          onClick={addNode}
-          class="btn btn-lg btn-warning"
-        >
-          DENSE
-        </button>
-        <button
-          type="button"
-          name="CONCAT"
-          onClick={addNode}
-          class="btn btn-lg btn-info"
-        >
-          CONCAT
-        </button>
-        <button
-          type="button"
-          name="COMPILE"
-          onClick={() => socket.emit("createModel", elements)}
-          class="btn btn-lg btn-warning"
-        >
-          CREATE
-        </button>
-
+      <div className={nodeMenuSwitch()}>
+        {trainStatus ? (
+          <Chart />
+        ) : (
+          <NodeButtons socket={socket} addNode={addNode} />
+        )}
         <button
           class="btn-block navbar-toggler navbar-light activator"
           type="button"

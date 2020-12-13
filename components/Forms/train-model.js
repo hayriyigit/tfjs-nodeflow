@@ -1,12 +1,18 @@
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { ElementsContext } from "../../contexts/ElementsContext";
 
 export default (props) => {
   const { socket } = props;
+  const { setEpoch, setTrainStatus } = useContext(ElementsContext);
   const { register, handleSubmit, watch, errors } = useForm();
+
   const onSubmit = (data) => {
     data.batchSize = parseInt(data.batchSize);
     data.epochs = parseInt(data.epochs);
     data.shuffle = data.shuffle == "true" ? true : false;
+    setEpoch(data.epochs);
+    setTrainStatus(true);
     socket.emit("trainModel", data);
   };
 
