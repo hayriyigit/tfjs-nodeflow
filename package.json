@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@blueprintjs/core": "^3.36.0",
     "@tensorflow/tfjs-node": "^2.7.0",
     "@zeit/next-css": "^1.0.1",
     "chart.js": "^2.9.4",
@@ -12,11 +13,15 @@
     "react-chartjs-2": "^2.11.1",
     "react-dom": "^17.0.1",
     "react-flow-renderer": "^7.1.2",
-    "react-hook-form": "^6.11.0",
+    "react-hook-form": "^6.14.0",
     "shortid": "^2.2.16",
     "socket.io": "^2.3.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "css-loader": "^5.0.1",
+    "file-loader": "^6.2.0",
+    "url-loader": "^4.1.1"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

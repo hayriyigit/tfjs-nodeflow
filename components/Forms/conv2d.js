@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { ElementsContext } from "../../contexts/ElementsContext";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { FormGroup, NumericInput, Button, HTMLSelect } from "@blueprintjs/core";
+import { ToastIt } from "../ToastComp";
 
 const padding = ["valid", "same", "causal"];
 const activation = [
@@ -27,10 +29,11 @@ const kernelInitializer = [
   "zeros",
 ];
 
-export default ({ node }) => {
+export default () => {
   const { updateElement } = useContext(ElementsContext);
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, control, errors } = useForm();
   const onSubmit = (data) => {
+    console.log(data);
     node.data.args.kernelSize = parseInt(data.kernelSize);
     node.data.args.filters = parseInt(data.filters);
     node.data.args.strides = parseInt(data.strides);
@@ -39,127 +42,118 @@ export default ({ node }) => {
   };
 
   return (
-    <div className="col">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset>
-          <legend>Conv 2D</legend>
-          <div class="form-group">
-            <fieldset>
-              <label class="control-label" for="filters">
-                Filter Size
-              </label>
-              <input
-                class={`form-control ${errors.filters && "is-invalid"}`}
-                id="filters"
-                name="filters"
-                type="number"
-                defaultValue={node.data.args.filters}
-                placeholder="Filter Size"
-                ref={register({ required: true, min: 1 })}
-              />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormGroup label={"Filter Size"} labelInfo={"(required)"}>
+        <Controller
+          as={<NumericInput inputRef={register} />}
+          name="filters"
+          fill={true}
+          min={1}
+          defaultValue={null}
+          control={control}
+          rules={{ required: true, min: 1 }}
+        />
 
-              {errors.filters && (
-                <div class="invalid-feedback">
-                  Please select filter size more than 0
-                </div>
-              )}
-            </fieldset>
+        {errors.filters && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select filter size more than 0", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <fieldset>
-              <label class="control-label" for="kernelSize">
-                Kernel Size
-              </label>
-              <input
-                class={`form-control ${errors.kernelSize && "is-invalid"}`}
-                id="kernelSize"
-                name="kernelSize"
-                type="number"
-                defaultValue={node.data.args.kernelSize}
-                placeholder="Kernel Size"
-                ref={register({ required: true, min: 1 })}
-              />
-              {errors.kernelSize && (
-                <div class="invalid-feedback">
-                  Please select kernel size more than 0
-                </div>
-              )}
-            </fieldset>
+      <FormGroup label={"Kernel Size"} labelInfo={"(required)"}>
+        <Controller
+          as={<NumericInput inputRef={register} />}
+          name="kernelSize"
+          fill={true}
+          min={1}
+          defaultValue={null}
+          control={control}
+          rules={{ required: true, min: 1 }}
+        />
+
+        {errors.kernelSize && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select Kernel Size size more than 0", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <fieldset>
-              <label class="control-label" for="strides">
-                Strides
-              </label>
-              <input
-                class={`form-control ${errors.strides && "is-invalid"}`}
-                id="strides"
-                name="strides"
-                defaultValue={node.data.args.strides}
-                type="number"
-                placeholder="Strides"
-                ref={register({ required: true, min: 1 })}
-              />
-              {errors.strides && (
-                <div class="invalid-feedback">
-                  Please select stride more than 0
-                </div>
-              )}
-            </fieldset>
+      <FormGroup label={"Strides"} labelInfo={"(required)"}>
+        <Controller
+          as={<NumericInput inputRef={register} />}
+          name="strides"
+          fill={true}
+          min={1}
+          defaultValue={null}
+          control={control}
+          rules={{ required: true, min: 1 }}
+        />
+
+        {errors.strides && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select Stride size more than 0", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <label for="padding">Padding mode</label>
-            <select
-              class="form-control"
-              id="padding"
-              name="padding"
-              defaultValue={node.data.args.padding}
-              ref={register}
-            >
-              {padding.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
+      <FormGroup label={"Padding Mode"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="padding"
+          fill={true}
+          options={padding}
+          defaultValue="valid"
+          control={control}
+          rules={{ required: true }}
+        />
+
+        {errors.padding && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid padding mode option", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <label for="activation">Activation Function</label>
-            <select
-              class="form-control"
-              id="activation"
-              name="activation"
-              defaultValue={node.data.args.activation}
-              ref={register}
-            >
-              {activation.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
+      <FormGroup label={"Activation Function"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="activation"
+          fill={true}
+          options={activation}
+          defaultValue="elu"
+          control={control}
+          rules={{ required: true }}
+        />
+
+        {errors.activation && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid activation option", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <label for="kernelInitializer">Kernel Initializer</label>
-            <select
-              class="form-control"
-              id="kernelInitializer"
-              name="kernelInitializer"
-              defaultValue={node.data.args.kernelInitializer}
-              ref={register}
-            >
-              {kernelInitializer.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
+      <FormGroup label={"Kernel Initializer"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="kernelInitializer"
+          fill={true}
+          options={kernelInitializer}
+          defaultValue="glorotNormal"
+          control={control}
+          rules={{ required: true }}
+        />
+
+        {errors.kernelInitializer && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid activation option", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <button type="submit" class="btn btn-warning btn-block">
-            Update
-          </button>
-        </fieldset>
-      </form>
-    </div>
+      <Button type="submit" block>
+        Update
+      </Button>
+    </form>
   );
 };

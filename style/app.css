@@ -6,8 +6,30 @@
 
 .main {
   height: 100vh;
+  display: flex;
   position: relative;
   overflow: hidden;
+}
+
+.side-bar {
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+  height: 100vh;
+  padding: 10px;
+  background-color: #394b59;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 80%;
+}
+
+.tool-bar {
+  display: flex;
+  width: 100%;
 }
 
 .config__menu {

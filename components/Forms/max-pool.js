@@ -1,13 +1,17 @@
 import { useContext } from "react";
 import { ElementsContext } from "../../contexts/ElementsContext";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { FormGroup, NumericInput, Button, HTMLSelect } from "@blueprintjs/core";
+import { ToastIt } from "../ToastComp";
 
 const padding = ["valid", "same", "causal"];
 const dataFormat = ["channelsFirst", "channelsLast"];
 
 export default ({ node }) => {
   const { updateElement } = useContext(ElementsContext);
-  const { register, handleSubmit, watch, errors } = useForm();
+
+  const { register, handleSubmit, control, errors } = useForm();
+
   const onSubmit = (data) => {
     node.data.args.poolSize = parseInt(data.poolSize);
     node.data.args.strides = parseInt(data.strides);
@@ -15,90 +19,82 @@ export default ({ node }) => {
   };
 
   return (
-    <div className="col ">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset>
-          <legend>Max Pooling 2D</legend>
-          <div class="form-group">
-            <fieldset>
-              <label class="control-label" for="poolSize">
-                Pool Size
-              </label>
-              <input
-                class={`form-control ${errors.poolSize && "is-invalid"}`}
-                id="poolSize"
-                name="poolSize"
-                type="number"
-                defaultValue={node.data.args.poolSize}
-                placeholder="Pool Size"
-                ref={register({ required: true, min: 1, max: 99 })}
-              />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormGroup label={"Pool Size"} labelInfo={"(required)"}>
+        <Controller
+          as={<NumericInput inputRef={register} />}
+          name="poolSize"
+          fill={true}
+          min={1}
+          defaultValue={null}
+          control={control}
+          rules={{ required: true, min: 1 }}
+        />
 
-              {errors.poolSize && (
-                <div class="invalid-feedback">
-                  Please select pool size size more than 0
-                </div>
-              )}
-            </fieldset>
+        {errors.poolSize && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select pool size more than 0", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <fieldset>
-              <label class="control-label" for="strides">
-                Strides
-              </label>
-              <input
-                class={`form-control ${errors.strides && "is-invalid"}`}
-                id="strides"
-                name="strides"
-                type="number"
-                defaultValue={node.data.args.strides}
-                placeholder="Strides"
-                ref={register({ required: true, min: 1 })}
-              />
-              {errors.strides && (
-                <div class="invalid-feedback">
-                  Please select stride more than 0
-                </div>
-              )}
-            </fieldset>
+      <FormGroup label={"Strides"} labelInfo={"(required)"}>
+        <Controller
+          as={<NumericInput inputRef={register} />}
+          name="strides"
+          fill={true}
+          min={1}
+          defaultValue={null}
+          control={control}
+          rules={{ required: true, min: 1 }}
+        />
+
+        {errors.strides && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select Stride size more than 0", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <label for="padding">Padding mode</label>
-            <select
-              class="form-control"
-              id="padding"
-              name="padding"
-              defaultValue={node.data.args.padding}
-              ref={register}
-            >
-              {padding.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
+      <FormGroup label={"Padding Mode"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="padding"
+          fill={true}
+          options={padding}
+          defaultValue="valid"
+          control={control}
+          rules={{ required: true }}
+        />
+
+        {errors.padding && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid padding mode option", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <label for="dataFormat">Data Format</label>
-            <select
-              class="form-control"
-              id="dataFormat"
-              name="dataFormat"
-              defaultValue={node.data.args.dataFormat}
-              ref={register}
-            >
-              {dataFormat.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
+      <FormGroup label={"Data Format"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="dataFormat"
+          fill={true}
+          options={dataFormat}
+          defaultValue="channelsFirst"
+          control={control}
+          rules={{ required: true }}
+        />
+
+        {errors.dataFormat && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid data format option", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <button type="submit" class="btn btn-warning btn-block">
-            Update
-          </button>
-        </fieldset>
-      </form>
-    </div>
+      <Button type="submit" block>
+        Update
+      </Button>
+    </form>
   );
 };

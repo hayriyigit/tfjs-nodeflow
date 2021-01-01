@@ -7,8 +7,10 @@ import Input from "./input";
 import Compile from "./compile";
 import TrainModel from "./train-model";
 
-export default ({ node, socket }) => {
-  switch (node.data.label) {
+export default () => {
+  const node = "TRAIN";
+  const socket = "TRAIN";
+  switch (node) {
     case "INPUT":
       return <Input node={node} />;
     case "CONV":

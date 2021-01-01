@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { ElementsContext } from "../../contexts/ElementsContext";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { FormGroup, NumericInput, Button, HTMLSelect } from "@blueprintjs/core";
+import { ToastIt } from "../ToastComp";
 
 const activation = [
   "elu",
@@ -29,54 +31,74 @@ const kernelInitializer = [
 
 export default ({ node }) => {
   const { updateElement } = useContext(ElementsContext);
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, control, errors } = useForm();
   const onSubmit = (data) => {
     node.data.args.units = parseInt(data.units);
     updateElement(node);
   };
 
   return (
-    <div className="col border p-3 border-info rounded-lg bg-light">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset>
-          <legend>Dense</legend>
-          <div class="form-group">
-            <fieldset>
-              <label class="control-label" for="units">
-                Units
-              </label>
-              <input
-                class={`form-control ${errors.units && "is-invalid"}`}
-                id="units"
-                name="units"
-                type="number"
-                defaultValue={node.data.args.units}
-                placeholder="Units"
-                ref={register({ required: true, min: 1 })}
-              />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormGroup label={"Units"} labelInfo={"(required)"}>
+        <Controller
+          as={<NumericInput inputRef={register} />}
+          name="units"
+          fill={true}
+          min={1}
+          defaultValue={null}
+          control={control}
+          rules={{ required: true, min: 1 }}
+        />
 
-              {errors.units && (
-                <div class="invalid-feedback">
-                  Please select filter size more than 0
-                </div>
-              )}
-            </fieldset>
+        {errors.units && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select unit size more than 0", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <div class="form-group">
-            <label for="activation">Activation Function</label>
-            <select
-              class="form-control"
-              id="activation"
-              defaultValue={node.data.args.activation}
-              name="activation"
-              ref={register}
-            >
-              {activation.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
+      <FormGroup label={"Activation Function"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="activation"
+          fill={true}
+          options={activation}
+          defaultValue="elu"
+          control={control}
+          rules={{ required: true }}
+        />
+
+        {errors.activation && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid activation option", "warning")}
           </div>
+        )}
+      </FormGroup>
+
+      <FormGroup label={"Kernel Initializer"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="kernelInitializer"
+          fill={true}
+          options={kernelInitializer}
+          defaultValue="glorotNormal"
+          control={control}
+          rules={{ required: true }}
+        />
+
+        {errors.kernelInitializer && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid activation option", "warning")}
+          </div>
+        )}
+      </FormGroup>
+
+      <Button type="submit" block>
+        Update
+      </Button>
+      {/* 
+
+          
 
           <div class="form-group">
             <label for="kernelInitializer">Kernel Initializer</label>
@@ -96,8 +118,7 @@ export default ({ node }) => {
           <button type="submit" class="btn btn-warning btn-block">
             Update
           </button>
-        </fieldset>
-      </form>
-    </div>
+        </fieldset> */}
+    </form>
   );
 };

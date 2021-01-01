@@ -1,4 +1,6 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { FormGroup, Button, HTMLSelect } from "@blueprintjs/core";
+import { ToastIt } from "../ToastComp";
 
 const optimizers = [
   "sgd",
@@ -24,44 +26,52 @@ const losses = [
 
 export default (props) => {
   const { socket } = props;
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, control, errors } = useForm();
   const onSubmit = (data) => {
     socket.emit("compileModel", data);
   };
 
   return (
-    <div className="col  p-3">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset>
-          <legend>Compile</legend>
-          <div class="form-group">
-            <label for="optimizer">Optimizer</label>
-            <select
-              class="form-control"
-              id="optimizer"
-              name="optimizer"
-              ref={register}
-            >
-              {optimizers.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormGroup label={"Optimizer"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="optimizer"
+          fill={true}
+          options={optimizers}
+          defaultValue="sgd"
+          control={control}
+          rules={{ required: true }}
+        />
 
-          <div class="form-group">
-            <label for="loss">Loss</label>
-            <select class="form-control" id="loss" name="loss" ref={register}>
-              {losses.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
+        {errors.optimizer && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid optimizer option", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <button type="submit" class="btn btn-dark btn-block">
-            Compile Model
-          </button>
-        </fieldset>
-      </form>
-    </div>
+      <FormGroup label={"Loss"} labelInfo={"(required)"}>
+        <Controller
+          as={<HTMLSelect inputRef={register} />}
+          name="loss"
+          fill={true}
+          options={losses}
+          defaultValue="absoluteDifference"
+          control={control}
+          rules={{ required: true }}
+        />
+
+        {errors.loss && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select valid loss option", "warning")}
+          </div>
+        )}
+      </FormGroup>
+
+      <Button type="submit" block>
+        Update
+      </Button>
+    </form>
   );
 };

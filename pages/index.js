@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
-import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
 import { useSocket } from "../hooks";
 import { ElementsContext } from "../contexts/ElementsContext";
-
+import { Divider } from "@blueprintjs/core";
+import FlowChart from "../components/FlowChart";
+import ToolBar from "../components/ToolBar";
+import NodeMenu from "../components/NodeMenu";
 import NodeElements from "../node-elements/";
 import Forms from "../components/Forms";
 import Chart from "../components/Chart";
@@ -53,53 +55,6 @@ export default () => {
     }
   }, [socket]);
 
-  useEffect(() => {
-    const initialNode = {
-      id: "input_1",
-      type: "input",
-      data: {
-        label: "INPUT",
-        args: {
-          row: 1,
-          column: 1,
-          channel: 1,
-          shape: [1, 1, 1],
-        },
-      },
-      connectable: true,
-      draggable: true,
-      position: {
-        x: 250,
-        y: 25,
-      },
-      sourcePosition: "right",
-    };
-
-    addElement(initialNode);
-  }, []);
-
-  const handleClick = () => setConfigMenu(!configMenu);
-
-  const onElementClick = async (event, element) => {
-    if (
-      !element.id.startsWith("reactflow__edge") &&
-      element.data.label != "CONCAT"
-    ) {
-      (!configMenu || node.id == element.id || !node) && handleClick();
-
-      setNode(element);
-      setNodeMenu(nodeMenu && false);
-    }
-  };
-  const onElementsRemove = (elementsToRemove) =>
-    setElements((els) => removeElements(elementsToRemove, els));
-
-  const onConnect = (params) =>
-    setElements((els) => {
-      params.type = "smoothstep";
-      return addEdge(params, els);
-    });
-
   const addNode = (e) => {
     const newElement = NodeElements(e.target.name);
     addElement(newElement);
@@ -112,31 +67,15 @@ export default () => {
   };
   return (
     <div className="main">
-      <ReactFlow
-        elements={elements}
-        onElementsRemove={onElementsRemove}
-        onElementClick={onElementClick}
-        onConnect={onConnect}
-        deleteKeyCode={46} /* 'delete'-key */
-      />
-
-      <div className={configMenu ? "config__menu active" : "config__menu"}>
-        {node ? <Forms node={node} socket={socket} /> : null}
+      <div className="side-bar bp3-dark">
+        <h3 className="bp3-heading">Settings</h3>
+        <Divider />
+        <Forms />
       </div>
-
-      <div className={nodeMenuSwitch()}>
-        {trainStatus ? (
-          <Chart />
-        ) : (
-          <NodeButtons socket={socket} addNode={addNode} />
-        )}
-        <button
-          class="btn-block navbar-toggler navbar-light activator"
-          type="button"
-          onClick={() => setNodeMenu(!nodeMenu)}
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+      <div className="content">
+        <ToolBar />
+        <NodeMenu />
+        <FlowChart />
       </div>
     </div>
   );

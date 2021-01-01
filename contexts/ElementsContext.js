@@ -1,15 +1,29 @@
 import { createContext, useEffect, useState } from "react";
 
 const ElementsContext = createContext();
+const initialNode = {
+  id: "input_1",
+  type: "input",
+  data: {
+    label: "INPUT",
+    args: {
+      row: 1,
+      column: 1,
+      channel: 1,
+      shape: [1, 1, 1],
+    },
+  },
+  connectable: true,
+  draggable: true,
+  position: {
+    x: 0,
+    y: 0,
+  },
+  sourcePosition: "right",
+};
 
 const ElementsProvider = ({ children }) => {
-  const [elements, setElements] = useState([]);
-  const [epoch, setEpoch] = useState(null);
-  const [trainStatus, setTrainStatus] = useState(false);
-  const [metric, setMetric] = useState({
-    loss: [],
-    val_loss: [],
-  });
+  const [elements, setElements] = useState([initialNode]);
 
   const addElement = (newElement) => {
     try {
@@ -37,29 +51,11 @@ const ElementsProvider = ({ children }) => {
     }
   };
 
-  const updateMetric = (newMetric) => {
-    try {
-      console.log(newMetric);
-      const newLoss = [...metric.loss, newMetric.result.loss];
-      const newValLoss = [...metric.val_loss, newMetric.result.val_loss];
-      setMetric({ loss: newLoss, val_loss: newValLoss });
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   return (
     <ElementsContext.Provider
       value={{
         elements,
         setElements,
-        epoch,
-        setEpoch,
-        trainStatus,
-        setTrainStatus,
-        metric,
-        setMetric,
-        updateMetric,
         addElement,
         updateElement,
         deleteElement,

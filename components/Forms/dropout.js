@@ -1,49 +1,45 @@
 import { useContext } from "react";
 import { ElementsContext } from "../../contexts/ElementsContext";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { FormGroup, NumericInput, Button, HTMLSelect } from "@blueprintjs/core";
+import { ToastIt } from "../ToastComp";
 
 export default ({ node }) => {
   const { updateElement } = useContext(ElementsContext);
-  const { register, handleSubmit, watch, errors } = useForm();
+
+  const { register, handleSubmit, control, errors } = useForm();
+
   const onSubmit = (data) => {
     node.data.args.rate = parseFloat(data.rate);
     updateElement(node);
   };
 
   return (
-    <div className="col border p-3 border-dark rounded-lg bg-light">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset>
-          <legend>Dropout</legend>
-          <div class="form-group">
-            <fieldset>
-              <label class="control-label" for="rate">
-                Rate
-              </label>
-              <input
-                class={`form-control ${errors.rate && "is-invalid"}`}
-                id="rate"
-                name="rate"
-                type="number"
-                defaultValue={node.data.args.rate}
-                placeholder="Rate"
-                step="0.01"
-                ref={register({ required: true, min: 0, max: 1 })}
-              />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormGroup label={"Rate"} labelInfo={"(required)"}>
+        <Controller
+          as={<NumericInput inputRef={register} />}
+          name="rate"
+          fill={true}
+          defaultValue={null}
+          minorStepSize={0.01}
+          stepSize={0.01}
+          min={0}
+          max={1}
+          control={control}
+          rules={{ required: true, min: 0, max: 1 }}
+        />
 
-              {errors.rate && (
-                <div class="invalid-feedback">
-                  Please select the rate between 0 and 1
-                </div>
-              )}
-            </fieldset>
+        {errors.rate && (
+          <div style={{ display: "none" }}>
+            {ToastIt("Please select rate size between 0 and 1", "warning")}
           </div>
+        )}
+      </FormGroup>
 
-          <button type="submit" class="btn btn-warning btn-block">
-            Update
-          </button>
-        </fieldset>
-      </form>
-    </div>
+      <Button type="submit" block>
+        Update
+      </Button>
+    </form>
   );
 };
