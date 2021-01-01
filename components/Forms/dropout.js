@@ -1,42 +1,39 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ElementsContext } from "../../contexts/ElementsContext";
-import { useForm, Controller } from "react-hook-form";
-import { FormGroup, NumericInput, Button, HTMLSelect } from "@blueprintjs/core";
-import { ToastIt } from "../ToastComp";
+import { Button } from "@blueprintjs/core";
+import NumberInput from "./form-components/NumberInput";
 
 export default ({ node }) => {
+  const [data, setData] = useState(node.data.args);
   const { updateElement } = useContext(ElementsContext);
 
-  const { register, handleSubmit, control, errors } = useForm();
+  const onNumberChange = (value, _, target) => {
+    setData({ ...data, [target.name]: value });
+  };
 
-  const onSubmit = (data) => {
-    node.data.args.rate = parseFloat(data.rate);
+  useEffect(() => {
+    setData(node.data.args);
+  }, [node]);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    node.data.args = data;
     updateElement(node);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormGroup label={"Rate"} labelInfo={"(required)"}>
-        <Controller
-          as={<NumericInput inputRef={register} />}
-          name="rate"
-          fill={true}
-          defaultValue={null}
-          minorStepSize={0.01}
-          stepSize={0.01}
-          min={0}
-          max={1}
-          control={control}
-          rules={{ required: true, min: 0, max: 1 }}
-        />
-
-        {errors.rate && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select rate size between 0 and 1", "warning")}
-          </div>
-        )}
-      </FormGroup>
-
+    <form onSubmit={onSubmit}>
+      <NumberInput
+        label="Rate"
+        name="rate"
+        min={0}
+        max={1}
+        stepSize={0.05}
+        value={data.rate}
+        onValueChange={(x, y, z) => {
+          onNumberChange(x, y, z);
+        }}
+      />
       <Button type="submit" block>
         Update
       </Button>

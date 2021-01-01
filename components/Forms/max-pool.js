@@ -1,96 +1,73 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ElementsContext } from "../../contexts/ElementsContext";
-import { useForm, Controller } from "react-hook-form";
-import { FormGroup, NumericInput, Button, HTMLSelect } from "@blueprintjs/core";
-import { ToastIt } from "../ToastComp";
+import { Button } from "@blueprintjs/core";
+import NumberInput from "./form-components/NumberInput";
+import SelectInput from "./form-components/SelectInput";
 
 const padding = ["valid", "same", "causal"];
 const dataFormat = ["channelsFirst", "channelsLast"];
 
 export default ({ node }) => {
+  const [data, setData] = useState(node.data.args);
   const { updateElement } = useContext(ElementsContext);
 
-  const { register, handleSubmit, control, errors } = useForm();
+  const onNumberChange = (value, _, target) => {
+    setData({ ...data, [target.name]: value });
+  };
 
-  const onSubmit = (data) => {
-    node.data.args.poolSize = parseInt(data.poolSize);
-    node.data.args.strides = parseInt(data.strides);
+  const onSelectChange = (event) => {
+    setData({ ...data, [event.currentTarget.name]: event.currentTarget.value });
+  };
+
+  useEffect(() => {
+    setData(node.data.args);
+  }, [node]);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    node.data.args = data;
     updateElement(node);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormGroup label={"Pool Size"} labelInfo={"(required)"}>
-        <Controller
-          as={<NumericInput inputRef={register} />}
-          name="poolSize"
-          fill={true}
-          min={1}
-          defaultValue={null}
-          control={control}
-          rules={{ required: true, min: 1 }}
-        />
+    <form onSubmit={onSubmit}>
+      <NumberInput
+        label="Pool Size"
+        name="poolSize"
+        min={1}
+        stepSize={1}
+        value={data.poolSize}
+        onValueChange={(x, y, z) => {
+          onNumberChange(x, y, z);
+        }}
+      />
 
-        {errors.poolSize && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select pool size more than 0", "warning")}
-          </div>
-        )}
-      </FormGroup>
+      <NumberInput
+        label="Strides"
+        name="strides"
+        min={1}
+        stepSize={1}
+        value={data.strides}
+        onValueChange={(x, y, z) => {
+          onNumberChange(x, y, z);
+        }}
+      />
 
-      <FormGroup label={"Strides"} labelInfo={"(required)"}>
-        <Controller
-          as={<NumericInput inputRef={register} />}
-          name="strides"
-          fill={true}
-          min={1}
-          defaultValue={null}
-          control={control}
-          rules={{ required: true, min: 1 }}
-        />
+      <SelectInput
+        label="Padding Mode"
+        name="padding"
+        options={padding}
+        value={data.padding}
+        onChange={onSelectChange}
+      />
 
-        {errors.strides && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select Stride size more than 0", "warning")}
-          </div>
-        )}
-      </FormGroup>
-
-      <FormGroup label={"Padding Mode"} labelInfo={"(required)"}>
-        <Controller
-          as={<HTMLSelect inputRef={register} />}
-          name="padding"
-          fill={true}
-          options={padding}
-          defaultValue="valid"
-          control={control}
-          rules={{ required: true }}
-        />
-
-        {errors.padding && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select valid padding mode option", "warning")}
-          </div>
-        )}
-      </FormGroup>
-
-      <FormGroup label={"Data Format"} labelInfo={"(required)"}>
-        <Controller
-          as={<HTMLSelect inputRef={register} />}
-          name="dataFormat"
-          fill={true}
-          options={dataFormat}
-          defaultValue="channelsFirst"
-          control={control}
-          rules={{ required: true }}
-        />
-
-        {errors.dataFormat && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select valid data format option", "warning")}
-          </div>
-        )}
-      </FormGroup>
+      <SelectInput
+        label="Data Format"
+        name="dataFormat"
+        options={dataFormat}
+        value={data.dataFormat}
+        onChange={onSelectChange}
+      />
 
       <Button type="submit" block>
         Update

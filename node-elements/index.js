@@ -22,11 +22,11 @@ export default (node) => {
         draggable: true,
         selectable: true,
       };
-    case "CONV":
+    case "Conv2D":
       return {
         id: shortid.generate(),
         data: {
-          label: "CONV",
+          label: "Conv2D",
           args: {
             filters: 1,
             kernelSize: 1,
@@ -50,11 +50,11 @@ export default (node) => {
           borderRadius: 0,
         },
       };
-    case "POOL":
+    case "MaxPool2D":
       return {
         id: shortid.generate(),
         data: {
-          label: "POOL",
+          label: "MaxPool2D",
           args: {
             poolSize: 1,
             strides: 1,
@@ -76,11 +76,11 @@ export default (node) => {
           borderRadius: 0,
         },
       };
-    case "DENSE":
+    case "Dense":
       return {
         id: shortid.generate(),
         data: {
-          label: "DENSE",
+          label: "Dense",
           args: {
             units: 1,
             activation: "relu",
@@ -101,11 +101,11 @@ export default (node) => {
           borderRadius: 0,
         },
       };
-    case "DROPOUT":
+    case "Dropout":
       return {
         id: shortid.generate(),
         data: {
-          label: "DROPOUT",
+          label: "Dropout",
           args: {
             rate: 0,
           },
@@ -124,11 +124,11 @@ export default (node) => {
           borderRadius: 0,
         },
       };
-    case "FLATTEN":
+    case "Flatten":
       return {
         id: shortid.generate(),
         data: {
-          label: "FLATTEN",
+          label: "Flatten",
           args: {
             dataFormat: "channelFirst",
           },
@@ -147,11 +147,11 @@ export default (node) => {
           borderRadius: 0,
         },
       };
-    case "CONCAT":
+    case "Concatenate":
       return {
         id: shortid.generate(),
         data: {
-          label: "CONCAT",
+          label: "Concatenate",
         },
         sourcePosition: "right",
         targetPosition: "left",

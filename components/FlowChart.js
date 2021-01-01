@@ -1,31 +1,18 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
+import { UIContext } from "../contexts/UIContext";
 import { ElementsContext } from "../contexts/ElementsContext";
 
 export default () => {
-  const {
-    elements,
-    setElements,
-    addElement,
-    trainStatus,
-    updateMetric,
-  } = useContext(ElementsContext);
+  const { elements, setElements } = useContext(ElementsContext);
+  const { setNode } = useContext(UIContext);
 
-  const [createStatus, setCreateStatus] = useState(false);
-  const [compileStatus, setCompileStatus] = useState(false);
-  const [configMenu, setConfigMenu] = useState(false);
-  const [nodeMenu, setNodeMenu] = useState(false);
-  const [node, setNode] = useState(null);
-  const handleClick = () => setConfigMenu(!configMenu);
   const onElementClick = async (event, element) => {
     if (
       !element.id.startsWith("reactflow__edge") &&
       element.data.label != "CONCAT"
     ) {
-      (!configMenu || node.id == element.id || !node) && handleClick();
-
       setNode(element);
-      setNodeMenu(nodeMenu && false);
     }
   };
 
@@ -44,7 +31,7 @@ export default () => {
       onElementsRemove={onElementsRemove}
       onElementClick={onElementClick}
       onConnect={onConnect}
-      deleteKeyCode={46} /* 'delete'-key */
+      deleteKeyCode={46}
     />
   );
 };

@@ -1,8 +1,8 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ElementsContext } from "../../contexts/ElementsContext";
-import { useForm, Controller } from "react-hook-form";
-import { FormGroup, NumericInput, Button, HTMLSelect } from "@blueprintjs/core";
-import { ToastIt } from "../ToastComp";
+import { Button } from "@blueprintjs/core";
+import NumberInput from "./form-components/NumberInput";
+import SelectInput from "./form-components/SelectInput";
 
 const activation = [
   "elu",
@@ -30,95 +30,61 @@ const kernelInitializer = [
 ];
 
 export default ({ node }) => {
+  const [data, setData] = useState(node.data.args);
   const { updateElement } = useContext(ElementsContext);
-  const { register, handleSubmit, control, errors } = useForm();
-  const onSubmit = (data) => {
-    node.data.args.units = parseInt(data.units);
+
+  const onNumberChange = (value, _, target) => {
+    setData({ ...data, [target.name]: value });
+  };
+
+  const onSelectChange = (event) => {
+    setData({ ...data, [event.currentTarget.name]: event.currentTarget.value });
+  };
+
+  // {ToastIt("Please select unit size more than 0", "warning")}
+
+  useEffect(() => {
+    setData(node.data.args);
+  }, [node]);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    console.log(data);
+    node.data.args = data;
     updateElement(node);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormGroup label={"Units"} labelInfo={"(required)"}>
-        <Controller
-          as={<NumericInput inputRef={register} />}
-          name="units"
-          fill={true}
-          min={1}
-          defaultValue={null}
-          control={control}
-          rules={{ required: true, min: 1 }}
-        />
+    <form onSubmit={onSubmit}>
+      <NumberInput
+        label="Units"
+        name="units"
+        min={1}
+        value={data.units}
+        onValueChange={(x, y, z) => {
+          onNumberChange(x, y, z);
+        }}
+      />
 
-        {errors.units && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select unit size more than 0", "warning")}
-          </div>
-        )}
-      </FormGroup>
+      <SelectInput
+        label="Activation Funtion"
+        name="activation"
+        options={activation}
+        value={data.activation}
+        onChange={onSelectChange}
+      />
 
-      <FormGroup label={"Activation Function"} labelInfo={"(required)"}>
-        <Controller
-          as={<HTMLSelect inputRef={register} />}
-          name="activation"
-          fill={true}
-          options={activation}
-          defaultValue="elu"
-          control={control}
-          rules={{ required: true }}
-        />
-
-        {errors.activation && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select valid activation option", "warning")}
-          </div>
-        )}
-      </FormGroup>
-
-      <FormGroup label={"Kernel Initializer"} labelInfo={"(required)"}>
-        <Controller
-          as={<HTMLSelect inputRef={register} />}
-          name="kernelInitializer"
-          fill={true}
-          options={kernelInitializer}
-          defaultValue="glorotNormal"
-          control={control}
-          rules={{ required: true }}
-        />
-
-        {errors.kernelInitializer && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select valid activation option", "warning")}
-          </div>
-        )}
-      </FormGroup>
+      <SelectInput
+        label="Kernel Initializer"
+        name="kernelInitializer"
+        options={kernelInitializer}
+        value={data.kernelInitializer}
+        onChange={onSelectChange}
+      />
 
       <Button type="submit" block>
         Update
       </Button>
-      {/* 
-
-          
-
-          <div class="form-group">
-            <label for="kernelInitializer">Kernel Initializer</label>
-            <select
-              class="form-control"
-              id="kernelInitializer"
-              name="kernelInitializer"
-              defaultValue={node.data.args.kernelInitializer}
-              ref={register}
-            >
-              {kernelInitializer.map((item) => (
-                <option>{item}</option>
-              ))}
-            </select>
-          </div>
-
-          <button type="submit" class="btn btn-warning btn-block">
-            Update
-          </button>
-        </fieldset> */}
     </form>
   );
 };

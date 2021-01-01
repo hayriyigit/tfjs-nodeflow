@@ -1,3 +1,5 @@
+import { UIContext } from "../../contexts/UIContext";
+import { useContext, useEffect, useState } from "react";
 import Conv2d from "./conv2d";
 import MaxPool from "./max-pool";
 import Dense from "./dense";
@@ -8,24 +10,37 @@ import Compile from "./compile";
 import TrainModel from "./train-model";
 
 export default () => {
-  const node = "TRAIN";
+  const { node, getNode } = useContext(UIContext);
+  const [selectedNode, setSelectedNode] = useState(getNode());
+  const [label, setLabel] = useState("");
   const socket = "TRAIN";
-  switch (node) {
-    case "INPUT":
-      return <Input node={node} />;
-    case "CONV":
-      return <Conv2d node={node} />;
-    case "POOL":
-      return <MaxPool node={node} />;
-    case "DENSE":
-      return <Dense node={node} />;
-    case "DROPOUT":
-      return <Dropout node={node} />;
-    case "FLATTEN":
-      return <Flatten node={node} />;
-    case "COMPILE":
-      return <Compile node={node} socket={socket} />;
-    case "TRAIN":
-      return <TrainModel node={node} socket={socket} />;
+
+  useEffect(() => {
+    if (node) {
+      setSelectedNode(getNode());
+      setLabel(node.data.label);
+    }
+  }, [node]);
+  // console.log(getNode());
+
+  switch (true) {
+    case label === "INPUT":
+      return <Input node={selectedNode} />;
+    case label === "Conv2D":
+      return <Conv2d node={selectedNode} />;
+    case label === "MaxPool2D":
+      return <MaxPool node={selectedNode} />;
+    case label === "Dense":
+      return <Dense node={selectedNode} />;
+    case label === "Dropout":
+      return <Dropout node={selectedNode} />;
+    case label === "Flatten":
+      return <Flatten node={selectedNode} />;
+    case label === "COMPILE":
+      return <Compile node={selectedNode} socket={socket} />;
+    case label === "TRAIN":
+      return <TrainModel node={selectedNode} socket={socket} />;
+    default:
+      return <></>;
   }
 };
