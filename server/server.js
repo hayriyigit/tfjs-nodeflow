@@ -1,4 +1,4 @@
-const tf = require("@tensorflow/tfjs-node");
+// const tf = require("@tensorflow/tfjs-node");
 const { MnistData } = require("./data");
 const { modelMapper } = require("../utils/model-mapper");
 
@@ -19,12 +19,12 @@ io.on("connection", (socket) => {
   socket.on("compileModel", async (data) => {
     try {
       model.compile(data);
-      socket.emit("compailed", {
+      socket.emit("compaile_status", {
         status: true,
         message: "Model compailed succesfully",
       });
     } catch (e) {
-      socket.emit("compailed", {
+      socket.emit("compaile_status", {
         status: false,
         message: `Error: ${e.message}`,
       });
@@ -34,12 +34,12 @@ io.on("connection", (socket) => {
   socket.on("createModel", async (data) => {
     try {
       model = modelMapper(data);
-      socket.emit("created", {
+      socket.emit("create_status", {
         status: true,
         message: "Model created succesfully",
       });
     } catch (e) {
-      socket.emit("created", {
+      socket.emit("create_status", {
         status: false,
         message: `Error: ${e.message}`,
       });

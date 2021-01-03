@@ -1,6 +1,6 @@
-import { useForm, Controller } from "react-hook-form";
-import { FormGroup, Button, HTMLSelect } from "@blueprintjs/core";
-import { ToastIt } from "../ToastComp";
+import { useContext } from "react";
+import { ModelContext } from "../../contexts/ModelContext";
+import SelectInput from "./form-components/SelectInput";
 
 const optimizers = [
   "sgd",
@@ -24,54 +24,33 @@ const losses = [
   "categoricalCrossentropy",
 ];
 
-export default (props) => {
-  const { socket } = props;
-  const { register, handleSubmit, control, errors } = useForm();
-  const onSubmit = (data) => {
-    socket.emit("compileModel", data);
+export default () => {
+  const { compData, setCompData } = useContext(ModelContext);
+
+  const onSelectChange = (event) => {
+    setCompData({
+      ...compData,
+      [event.currentTarget.name]: event.currentTarget.value,
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormGroup label={"Optimizer"} labelInfo={"(required)"}>
-        <Controller
-          as={<HTMLSelect inputRef={register} />}
-          name="optimizer"
-          fill={true}
-          options={optimizers}
-          defaultValue="sgd"
-          control={control}
-          rules={{ required: true }}
-        />
+    <form>
+      <SelectInput
+        label="Optimizer Function"
+        name="optimizer"
+        options={optimizers}
+        value={compData.optimizer}
+        onChange={onSelectChange}
+      />
 
-        {errors.optimizer && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select valid optimizer option", "warning")}
-          </div>
-        )}
-      </FormGroup>
-
-      <FormGroup label={"Loss"} labelInfo={"(required)"}>
-        <Controller
-          as={<HTMLSelect inputRef={register} />}
-          name="loss"
-          fill={true}
-          options={losses}
-          defaultValue="absoluteDifference"
-          control={control}
-          rules={{ required: true }}
-        />
-
-        {errors.loss && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select valid loss option", "warning")}
-          </div>
-        )}
-      </FormGroup>
-
-      <Button type="submit" block>
-        Update
-      </Button>
+      <SelectInput
+        label="Loss Function"
+        name="loss"
+        options={losses}
+        value={compData.loss}
+        onChange={onSelectChange}
+      />
     </form>
   );
 };

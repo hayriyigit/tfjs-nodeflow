@@ -18,10 +18,9 @@ export default () => {
   useEffect(() => {
     if (node) {
       setSelectedNode(getNode());
-      setLabel(node.data.label);
+      node.data ? setLabel(node.data.label) : setLabel(node);
     }
   }, [node]);
-  // console.log(getNode());
 
   switch (true) {
     case label === "INPUT":
@@ -36,9 +35,9 @@ export default () => {
       return <Dropout node={selectedNode} />;
     case label === "Flatten":
       return <Flatten node={selectedNode} />;
-    case label === "COMPILE":
-      return <Compile node={selectedNode} socket={socket} />;
-    case label === "TRAIN":
+    case label === "compile":
+      return <Compile />;
+    case label === "train":
       return <TrainModel node={selectedNode} socket={socket} />;
     default:
       return <></>;

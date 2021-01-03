@@ -95,26 +95,26 @@ const createLayers = (childs, tree) => {
 
 const createLayer = (child, type, tree) => {
   switch (type) {
-    case "CONV":
+    case "Conv2D":
       return tf.layers
         .conv2d(tree[child].args)
         .apply(global[String(tree[child].parents[0])]);
-    case "POOL":
+    case "MaxPool2D":
       return tf.layers
         .maxPooling2d(tree[child].args)
         .apply(global[String(tree[child].parents[0])]);
 
-    case "DENSE":
+    case "Dense":
       return tf.layers
         .dense(tree[child].args)
         .apply(global[String(tree[child].parents[0])]);
 
-    case "DROPOUT":
+    case "Dropout":
       return tf.layers
         .dropout(tree[child].args)
         .apply(global[String(tree[child].parents[0])]);
 
-    case "FLATTEN":
+    case "Flatten":
       return tf.layers
         .flatten(tree[child].args)
         .apply(global[String(tree[child].parents[0])]);

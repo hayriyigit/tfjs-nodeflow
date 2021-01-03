@@ -1,17 +1,21 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 const ModelContext = createContext();
 
 const ModelProvider = ({ children }) => {
-  const [createStatus, setCreateStatus] = useState(false);
-  const [compileStatus, setCompileStatus] = useState(false);
   const [trainStatus, setTrainStatus] = useState(false);
-  const [epoch, setEpoch] = useState(null);
-  const [batchSize, setBatchSize] = useState(null);
+  const [compData, setCompData] = useState({
+    optimizer: "sgd",
+    loss: "absoluteDifference",
+  });
   const [metric, setMetric] = useState({
     loss: [],
     val_loss: [],
   });
+
+  useEffect(() => {
+    console.log("compData changed!");
+  }, [compData]);
 
   const updateMetric = (newMetric) => {
     try {
@@ -27,19 +31,13 @@ const ModelProvider = ({ children }) => {
   return (
     <ModelContext.Provider
       value={{
-        createStatus,
-        setCreateStatus,
-        compileStatus,
-        setCompileStatus,
-        batchSize,
-        setBatchSize,
-        epoch,
-        setEpoch,
         trainStatus,
         setTrainStatus,
         metric,
         setMetric,
         updateMetric,
+        compData,
+        setCompData,
       }}
     >
       {children}

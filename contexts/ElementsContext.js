@@ -25,6 +25,8 @@ const initialNode = {
 const ElementsProvider = ({ children }) => {
   const [elements, setElements] = useState([initialNode]);
 
+  const getElements = () => elements;
+
   const addElement = (newElement) => {
     try {
       setElements([newElement, ...elements]);
@@ -56,6 +58,7 @@ const ElementsProvider = ({ children }) => {
       value={{
         elements,
         setElements,
+        getElements,
         addElement,
         updateElement,
         deleteElement,
