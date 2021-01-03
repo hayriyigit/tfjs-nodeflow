@@ -17,7 +17,7 @@ export default ({ node }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    setData({ ...data, shape: [row, column, channel] });
+    setData({ ...data, shape: [data.row, data.column, data.channel] });
     node.data.args = data;
     updateElement(node);
   };
