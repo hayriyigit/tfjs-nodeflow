@@ -18,11 +18,6 @@ const ModelProvider = ({ children }) => {
     val_loss: [],
   });
 
-  useEffect(() => {
-    console.log("compData changed!");
-    console.log(trainData);
-  }, [trainData]);
-
   const updateMetric = (newMetric) => {
     try {
       console.log(newMetric);

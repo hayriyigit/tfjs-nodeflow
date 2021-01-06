@@ -19,7 +19,7 @@ export default () => {
   const socket = useContext(SocketContext);
   const { elements } = useContext(ElementsContext);
   const { setNode } = useContext(UIContext);
-  const { compData } = useContext(ModelContext);
+  const { compData, trainData } = useContext(ModelContext);
 
   const createModel = () => socket.emit("createModel", elements);
 
@@ -27,6 +27,12 @@ export default () => {
     created
       ? socket.emit("compileModel", compData)
       : ToastIt("Model hasn't created yet", "danger");
+  };
+
+  const trainModel = () => {
+    compiled
+      ? socket.emit("trainModel", trainData)
+      : ToastIt("Model hasn't compiled yet", "danger");
   };
 
   const handleCreateStatus = (status, message) => {
@@ -91,7 +97,7 @@ export default () => {
             className={Classes.MINIMAL}
             rightIcon="arrow-right"
             text="Train Model"
-            onClick={() => ToastIt("Model is not compiled yet", "danger")}
+            onClick={trainModel}
           />
         </NavbarGroup>
         <Navbar.Group align={Alignment.RIGHT}>
