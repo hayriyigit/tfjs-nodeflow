@@ -8,6 +8,11 @@ const ModelProvider = ({ children }) => {
     optimizer: "sgd",
     loss: "absoluteDifference",
   });
+  const [trainData, setTrainData] = useState({
+    batchSize: 1,
+    epochs: 1,
+    shuffle: true,
+  });
   const [metric, setMetric] = useState({
     loss: [],
     val_loss: [],
@@ -15,7 +20,8 @@ const ModelProvider = ({ children }) => {
 
   useEffect(() => {
     console.log("compData changed!");
-  }, [compData]);
+    console.log(trainData);
+  }, [trainData]);
 
   const updateMetric = (newMetric) => {
     try {
@@ -33,6 +39,8 @@ const ModelProvider = ({ children }) => {
       value={{
         trainStatus,
         setTrainStatus,
+        trainData,
+        setTrainData,
         metric,
         setMetric,
         updateMetric,

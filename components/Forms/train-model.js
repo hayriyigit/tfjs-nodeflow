@@ -1,83 +1,53 @@
 import { useContext } from "react";
-import { ElementsContext } from "../../contexts/ElementsContext";
-import { useForm, Controller } from "react-hook-form";
-import {
-  FormGroup,
-  NumericInput,
-  Button,
-  Switch,
-  Alignment,
-} from "@blueprintjs/core";
-import { ToastIt } from "../ToastComp";
+import { ModelContext } from "../../contexts/ModelContext";
+import SelectInput from "./form-components/SelectInput";
+import NumberInput from "./form-components/NumberInput";
 
-export default (props) => {
-  const { socket } = props;
-  const { setEpoch, setTrainStatus } = useContext(ElementsContext);
-  const { register, handleSubmit, control, errors } = useForm();
+export default () => {
+  const { trainData, setTrainData } = useContext(ModelContext);
 
-  const onSubmit = (data) => {
-    console.log(data);
-    data.batchSize = parseInt(data.batchSize);
-    data.epochs = parseInt(data.epochs);
-    data.shuffle = data.shuffle == "true" ? true : false;
-    setEpoch(data.epochs);
-    setTrainStatus(true);
-    socket.emit("trainModel", data);
+  const onNumberChange = (value, _, target) => {
+    setTrainData({ ...trainData, [target.name]: value });
+  };
+
+  const onSelectChange = (event) => {
+    setTrainData({
+      ...trainData,
+      [event.currentTarget.name]: event.currentTarget.value === "true",
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormGroup label={"Batch Size"} labelInfo={"(required)"}>
-        <Controller
-          as={<NumericInput inputRef={register} />}
-          name="batchSize"
-          fill={true}
-          min={1}
-          defaultValue={null}
-          control={control}
-          rules={{ required: true, min: 1 }}
-        />
+    <form>
+      <NumberInput
+        label="Epochs"
+        name="epochs"
+        min={1}
+        stepSize={1}
+        value={trainData.epochs}
+        onValueChange={(x, y, z) => {
+          onNumberChange(x, y, z);
+        }}
+      />
 
-        {errors.batchSize && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select batch size more than 0", "warning")}
-          </div>
-        )}
-      </FormGroup>
+      <NumberInput
+        label="Batch Size"
+        name="batchSize"
+        min={1}
+        stepSize={1}
+        value={trainData.batchSize}
+        onValueChange={(x, y, z) => {
+          onNumberChange(x, y, z);
+        }}
+      />
 
-      <FormGroup label={"Epochs"} labelInfo={"(required)"}>
-        <Controller
-          as={<NumericInput inputRef={register} />}
-          name="epochs"
-          fill={true}
-          min={1}
-          defaultValue={null}
-          control={control}
-          rules={{ required: true, min: 1 }}
-        />
-
-        {errors.epochs && (
-          <div style={{ display: "none" }}>
-            {ToastIt("Please select epoch size more than 0", "warning")}
-          </div>
-        )}
-      </FormGroup>
-      <FormGroup>
-        <Switch
-          name="shuffle"
-          label="Shuffle"
-          innerLabel="false"
-          innerLabelChecked="true"
-          defaultChecked={true}
-          large={true}
-          alignIndicator={Alignment.RIGHT}
-          inputRef={register}
-        />
-      </FormGroup>
-
-      <Button type="submit" block>
-        Update
-      </Button>
+      <SelectInput
+        label="Shuffle"
+        name="shuffle"
+        options={["true", "false"]}
+        value={trainData.shuffle}
+        onChange={onSelectChange}
+      />
     </form>
   );
 };
