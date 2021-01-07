@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { ElementsContext } from "../contexts/ElementsContext";
 import { SocketContext } from "../contexts/SocketContext";
 import { UIContext } from "../contexts/UIContext";
@@ -20,6 +21,7 @@ export default () => {
   const { elements } = useContext(ElementsContext);
   const { setNode } = useContext(UIContext);
   const { compData, trainData } = useContext(ModelContext);
+  const router = useRouter();
 
   const createModel = () => socket.emit("createModel", elements);
 
@@ -30,9 +32,12 @@ export default () => {
   };
 
   const trainModel = () => {
-    compiled
-      ? socket.emit("trainModel", trainData)
-      : ToastIt("Model hasn't compiled yet", "danger");
+    if (compiled) {
+      socket.emit("trainModel", trainData);
+      router.push("/train");
+    } else {
+      ToastIt("Model hasn't compiled yet", "danger");
+    }
   };
 
   const handleCreateStatus = (status, message) => {

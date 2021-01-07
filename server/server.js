@@ -18,7 +18,7 @@ server.listen(PORT, () => {
 io.on("connection", (socket) => {
   socket.on("compileModel", async (data) => {
     try {
-      model.compile(data);
+      model.compile({ ...data, metrics: ["accuracy"] });
       socket.emit("compaile_status", {
         status: true,
         message: "Model compailed succesfully",
@@ -74,16 +74,13 @@ io.on("connection", (socket) => {
       validationSplit: 0.2,
       callbacks: {
         onEpochEnd: async (epochs, logs) => {
-          let loss = 0;
-          let val_loss = 0;
-          try {
-            loss = Number(logs.loss.toFixed(3));
-            val_loss = Number(logs.val_loss.toFixed(3));
-          } catch (err) {
-            console.error(err);
-          }
-          const result = { val_loss, loss };
-          console.log(result);
+          const result = {
+            val_loss: logs.val_loss.toFixed(3),
+            loss: logs.loss.toFixed(3),
+            val_acc: logs.val_acc.toFixed(3),
+            acc: logs.acc.toFixed(3),
+          };
+
           socket.emit("onEpochEnd", { epochs, result });
         },
       },

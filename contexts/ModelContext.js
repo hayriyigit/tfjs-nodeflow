@@ -16,14 +16,23 @@ const ModelProvider = ({ children }) => {
   const [metric, setMetric] = useState({
     loss: [],
     val_loss: [],
+    acc: [],
+    val_acc: [],
   });
 
   const updateMetric = (newMetric) => {
     try {
       console.log(newMetric);
-      const newLoss = [...metric.loss, newMetric.result.loss];
-      const newValLoss = [...metric.val_loss, newMetric.result.val_loss];
-      setMetric({ loss: newLoss, val_loss: newValLoss });
+      const newLoss = [...metric.loss, newMetric.loss];
+      const newValLoss = [...metric.val_loss, newMetric.val_loss];
+      const newAcc = [...metric.acc, newMetric.acc];
+      const newValAcc = [...metric.val_acc, newMetric.val_acc];
+      setMetric({
+        loss: newLoss,
+        val_loss: newValLoss,
+        acc: newAcc,
+        val_acc: newValAcc,
+      });
     } catch (e) {
       console.error(e);
     }

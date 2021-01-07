@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ElementsContext } from "../contexts/ElementsContext";
+import { useContext, useEffect, useState } from "react";
+import { ModelContext } from "../contexts/ModelContext";
 
 import { Line } from "react-chartjs-2";
 
-const getState = (length, metric) => ({
+const getState = (length, metric, name) => ({
   labels: [...Array(length).keys()],
   datasets: [
     {
-      label: "Loss",
+      label: name,
       fill: false,
       lineTension: 0.1,
       backgroundColor: "rgba(75,192,192,0.4)",
@@ -25,10 +25,10 @@ const getState = (length, metric) => ({
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
-      data: metric.loss,
+      data: metric[name.toLowerCase()],
     },
     {
-      label: "Val Loss",
+      label: `Val ${name}`,
       fill: false,
       lineTension: 0.1,
       backgroundColor: "rgba(255,99,132,0.4)",
@@ -46,21 +46,21 @@ const getState = (length, metric) => ({
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
-      data: metric.val_loss,
+      data: metric[`val_${name.toLowerCase()}`],
     },
   ],
 });
 
-export default () => {
-  const { metric } = useContext(ElementsContext);
+export default ({ graph }) => {
+  const { metric } = useContext(ModelContext);
   const [chartState, setChartState] = useState(null);
 
   useEffect(() => {
-    setChartState(getState(metric.loss.length, metric));
+    setChartState(getState(metric.loss.length, metric, graph));
   }, [metric]);
 
   return (
-    <div style={{ height: "100%", width: "50%" }}>
+    <div style={{ height: "100%", width: "100%" }}>
       <Line data={chartState} />
     </div>
   );
