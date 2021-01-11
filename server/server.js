@@ -59,7 +59,6 @@ io.on("connection", (socket) => {
     trainMin = trainImages.min();
     testMax = testImages.max();
     testMin = testImages.min();
-    console.log(trainMax);
     const normalizedTrain = trainImages
       .sub(trainMin)
       .div(trainMax.sub(trainMin));
@@ -80,6 +79,7 @@ io.on("connection", (socket) => {
             val_acc: logs.val_acc.toFixed(3),
             acc: logs.acc.toFixed(3),
           };
+          console.log("Layer 1: \n", lastModel.getWeights()[1].dataSync());
 
           socket.emit("onEpochEnd", { epochs, result });
         },

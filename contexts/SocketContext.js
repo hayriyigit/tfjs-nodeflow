@@ -9,27 +9,6 @@ const SocketProvider = ({ children }) => {
     reconnectionDelayMax: 300,
   });
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     // socket.on("create_status", ({ status, message }) => {
-  //     //   setCreateStatus(status);
-  //     // });
-
-  //     socket.on("compailed", ({ status, message }) => {
-  //       console.log("Model Compile Status");
-  //       console.log("Status: ", status);
-  //       console.log("Message: ", message);
-  //       // setCompileStatus(status);
-  //       // setConfigMenu(true);
-  //       // if (status) setNode({ data: { label: "TRAIN" } });
-  //     });
-
-  //     //   socket.on("onEpochEnd", (data) => {
-  //     //     updateMetric(data);
-  //     //   });
-  //   }
-  // }, [socket]);
-
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
   );
