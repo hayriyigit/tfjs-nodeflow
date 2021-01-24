@@ -4,6 +4,9 @@ const ModelContext = createContext();
 
 const ModelProvider = ({ children }) => {
   const [trainStatus, setTrainStatus] = useState(false);
+  const [layers, setLayers] = useState([]);
+  const [weights, setWeights] = useState({});
+  const [selectedLayer, setSelectedLayer] = useState("");
   const [compData, setCompData] = useState({
     optimizer: "sgd",
     loss: "absoluteDifference",
@@ -22,7 +25,6 @@ const ModelProvider = ({ children }) => {
 
   const updateMetric = (newMetric) => {
     try {
-      console.log(newMetric);
       const newLoss = [...metric.loss, newMetric.loss];
       const newValLoss = [...metric.val_loss, newMetric.val_loss];
       const newAcc = [...metric.acc, newMetric.acc];
@@ -50,6 +52,12 @@ const ModelProvider = ({ children }) => {
         updateMetric,
         compData,
         setCompData,
+        layers,
+        setLayers,
+        weights,
+        setWeights,
+        selectedLayer,
+        setSelectedLayer,
       }}
     >
       {children}

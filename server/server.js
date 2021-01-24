@@ -1,4 +1,4 @@
-// const tf = require("@tensorflow/tfjs-node");
+const tf = require("@tensorflow/tfjs-node");
 const { MnistData } = require("./data");
 const { modelMapper } = require("../utils/model-mapper");
 
@@ -19,6 +19,7 @@ io.on("connection", (socket) => {
   socket.on("compileModel", async (data) => {
     try {
       model.compile({ ...data, metrics: ["accuracy"] });
+
       socket.emit("compaile_status", {
         status: true,
         message: "Model compailed succesfully",
@@ -34,9 +35,16 @@ io.on("connection", (socket) => {
   socket.on("createModel", async (data) => {
     try {
       model = modelMapper(data);
+
+      const layers = model.layers.reduce(
+        (acc, layer) => [...acc, layer.name],
+        []
+      );
+
       socket.emit("create_status", {
         status: true,
         message: "Model created succesfully",
+        layers: layers,
       });
     } catch (e) {
       socket.emit("create_status", {
@@ -63,9 +71,8 @@ io.on("connection", (socket) => {
       .sub(trainMin)
       .div(trainMax.sub(trainMin));
     const normalizedTest = testImages.sub(testMin).div(testMax.sub(testMin));
-    const lastModel = model;
 
-    await lastModel.fit(normalizedTrain, trainLabels, {
+    await model.fit(normalizedTrain, trainLabels, {
       batchSize: data.batchSize,
       epochs: data.epochs,
       shuffle: data.shuffle,
@@ -79,9 +86,12 @@ io.on("connection", (socket) => {
             val_acc: logs.val_acc.toFixed(3),
             acc: logs.acc.toFixed(3),
           };
-          console.log("Layer 1: \n", lastModel.getWeights()[1].dataSync());
+          let weights = {};
+          for (let i = 1; i < model.getWeights().length; i++) {
+            weights[model.layers[i].name] = model.getWeights()[i].dataSync();
+          }
 
-          socket.emit("onEpochEnd", { epochs, result });
+          socket.emit("onEpochEnd", { epochs, result, weights });
         },
       },
     });

@@ -13,14 +13,16 @@ import {
   NavbarGroup,
 } from "@blueprintjs/core";
 
-export default () => {
+export default ({ mode, func }) => {
   const [created, setCreated] = useState(false);
   const [compiled, setCompiled] = useState(false);
 
   const socket = useContext(SocketContext);
   const { elements } = useContext(ElementsContext);
   const { setNode } = useContext(UIContext);
-  const { compData, trainData } = useContext(ModelContext);
+  const { compData, trainData, setLayers, setSelectedLayer } = useContext(
+    ModelContext
+  );
   const router = useRouter();
 
   const createModel = () => socket.emit("createModel", elements);
@@ -40,9 +42,11 @@ export default () => {
     }
   };
 
-  const handleCreateStatus = (status, message) => {
+  const handleCreateStatus = (status, message, layers) => {
     if (status) {
       setCreated(true);
+      setLayers(layers);
+      setSelectedLayer(layers[1]);
       setNode("compile");
       ToastIt("Model created successfully", "success");
     } else {
@@ -72,8 +76,8 @@ export default () => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("create_status", ({ status, message }) =>
-        handleCreateStatus(status, message)
+      socket.on("create_status", ({ status, message, layers }) =>
+        handleCreateStatus(status, message, layers)
       );
 
       socket.on("compaile_status", ({ status, message }) =>
@@ -85,26 +89,38 @@ export default () => {
   return (
     <div className="tool-bar">
       <Navbar className="bp3-dark">
-        <NavbarGroup align={Alignment.LEFT}>
-          <Button
-            className={Classes.MINIMAL}
-            icon="new-object"
-            text="Create"
-            onClick={createModel}
-          />
-          <Button
-            className={Classes.MINIMAL}
-            icon="cog"
-            text="Compile"
-            onClick={compileModel}
-          />
-          <Button
-            className={Classes.MINIMAL}
-            rightIcon="arrow-right"
-            text="Train Model"
-            onClick={trainModel}
-          />
-        </NavbarGroup>
+        {mode == "train" ? (
+          <NavbarGroup align={Alignment.LEFT}>
+            <Button
+              className={Classes.MINIMAL}
+              icon="drag-handle-vertical"
+              text="Layers"
+              onClick={func}
+            />
+          </NavbarGroup>
+        ) : (
+          <NavbarGroup align={Alignment.LEFT}>
+            <Button
+              className={Classes.MINIMAL}
+              icon="new-object"
+              text="Create"
+              onClick={createModel}
+            />
+            <Button
+              className={Classes.MINIMAL}
+              icon="cog"
+              text="Compile"
+              onClick={compileModel}
+            />
+            <Button
+              className={Classes.MINIMAL}
+              rightIcon="arrow-right"
+              text="Train Model"
+              onClick={trainModel}
+            />
+          </NavbarGroup>
+        )}
+
         <Navbar.Group align={Alignment.RIGHT}>
           <Button className="bp3-minimal" icon="user" />
           <Button className="bp3-minimal" icon="notifications" />
