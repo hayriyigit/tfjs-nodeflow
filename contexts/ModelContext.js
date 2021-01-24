@@ -9,11 +9,15 @@ const ModelProvider = ({ children }) => {
   const [selectedLayer, setSelectedLayer] = useState("");
   const [compData, setCompData] = useState({
     optimizer: "sgd",
+    learningRate: 0,
     loss: "absoluteDifference",
   });
   const [trainData, setTrainData] = useState({
     batchSize: 1,
     epochs: 1,
+    callback: false,
+    monitor: "val_loss",
+    patience: 0,
     shuffle: true,
   });
   const [metric, setMetric] = useState({

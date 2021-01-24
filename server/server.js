@@ -18,8 +18,11 @@ server.listen(PORT, () => {
 io.on("connection", (socket) => {
   socket.on("compileModel", async (data) => {
     try {
-      model.compile({ ...data, metrics: ["accuracy"] });
-
+      model.compile({
+        optimizer: tf.train[data.optimizer]((learningRate = data.learningRate)),
+        loss: data.loss,
+        metrics: ["accuracy"],
+      });
       socket.emit("compaile_status", {
         status: true,
         message: "Model compailed succesfully",
@@ -56,7 +59,7 @@ io.on("connection", (socket) => {
 
   socket.on("trainModel", async (data) => {
     const dataset = new MnistData();
-
+    console.log(data);
     const {
       trainImages,
       trainLabels,
@@ -72,28 +75,42 @@ io.on("connection", (socket) => {
       .div(trainMax.sub(trainMin));
     const normalizedTest = testImages.sub(testMin).div(testMax.sub(testMin));
 
+    const onEpochEnd = async (epochs, logs) => {
+      const result = {
+        val_loss: logs.val_loss.toFixed(3),
+        loss: logs.loss.toFixed(3),
+        val_acc: logs.val_acc.toFixed(3),
+        acc: logs.acc.toFixed(3),
+      };
+      let weights = {};
+      for (let i = 1; i < model.getWeights().length; i++) {
+        weights[model.layers[i].name] = model.getWeights()[i].dataSync();
+      }
+
+      socket.emit("onEpochEnd", { epochs, result, weights });
+    };
+
+    const callback = data.callback
+      ? [
+          tf.callbacks.earlyStopping({
+            monitor: data.monitor,
+            patience: data.patience,
+          }),
+        ]
+      : [];
+
     await model.fit(normalizedTrain, trainLabels, {
       batchSize: data.batchSize,
       epochs: data.epochs,
       shuffle: data.shuffle,
       verbose: 0,
       validationSplit: 0.2,
-      callbacks: {
-        onEpochEnd: async (epochs, logs) => {
-          const result = {
-            val_loss: logs.val_loss.toFixed(3),
-            loss: logs.loss.toFixed(3),
-            val_acc: logs.val_acc.toFixed(3),
-            acc: logs.acc.toFixed(3),
-          };
-          let weights = {};
-          for (let i = 1; i < model.getWeights().length; i++) {
-            weights[model.layers[i].name] = model.getWeights()[i].dataSync();
-          }
-
-          socket.emit("onEpochEnd", { epochs, result, weights });
-        },
-      },
+      callbacks: [
+        new tf.CustomCallback({
+          onEpochEnd: onEpochEnd,
+        }),
+        ...callback,
+      ],
     });
   });
 });
