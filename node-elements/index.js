@@ -24,26 +24,6 @@ const createElement = (label) => ({
 
 export default (label) => {
   switch (label) {
-    // case "INPUT":
-    //   return {
-    //     id: shortid.generate(),
-    //     type: "input",
-    //     data: {
-    //       label: "INPUT",
-    //       args: {
-    //         row: 1,
-    //         column: 1,
-    //         channel: 1,
-    //         shape: [1, 1, 1],
-    //       },
-    //     },
-    //     sourcePosition: "right",
-    //     targetPosition: "left",
-    //     position: { x: 250, y: 25 },
-    //     connectable: true,
-    //     draggable: true,
-    //     selectable: true,
-    //   };
     case "Conv2D":
       return createElement(label);
     case "MaxPool2D":
@@ -55,6 +35,12 @@ export default (label) => {
     case "Flatten":
       return createElement(label);
     case "Concatenate":
+      return createElement(label);
+    case "BatchNorm":
+      return createElement(label);
+    case "SepConv2D":
+      return createElement(label);
+    case "AvgPooling2D":
       return createElement(label);
   }
 };

@@ -118,6 +118,21 @@ const createLayer = (child, type, tree) => {
       return tf.layers
         .flatten(tree[child].args)
         .apply(global[String(tree[child].parents[0])]);
+
+    case "BatchNorm":
+      return tf.layers
+        .batchNormalization(tree[child].args)
+        .apply(global[String(tree[child].parents[0])]);
+
+    case "SepConv2D":
+      return tf.layers
+        .separableConv2d(tree[child].args)
+        .apply(global[String(tree[child].parents[0])]);
+
+    case "AvgPooling2D":
+      return tf.layers
+        .averagePooling2d(tree[child].args)
+        .apply(global[String(tree[child].parents[0])]);
   }
 };
 

@@ -23,16 +23,13 @@ export default () => {
   };
   const convLayer = (
     <Menu>
-      <MenuItem text="Conv1D" />
       <MenuItem text="Conv2D" onClick={addNode} />
-      <MenuItem text="Conv3D" />
-      <MenuItem text="SeperableConv1D" />
-      <MenuItem text="SeperableConv2D" />
+      <MenuItem text="SepConv2D" onClick={addNode} />
     </Menu>
   );
   const poolingLayer = (
     <Menu>
-      <MenuItem text="AveragePooling2D" />
+      <MenuItem text="AvgPooling2D" onClick={addNode} />
       <MenuItem text="MaxPool2D" onClick={addNode} />
       <MenuItem text="GlobalAveragePooling2D" />
       <MenuItem text="GlobalMaxPooling2D" />
@@ -41,8 +38,7 @@ export default () => {
   const dropoutLayer = (
     <Menu>
       <MenuItem text="Dropout" onClick={addNode} />
-      <MenuItem text="SpartialDropout2D" />
-      <MenuItem text="GaussianDropout" />
+      <MenuItem text="BatchNorm" onClick={addNode} />
     </Menu>
   );
 
@@ -51,8 +47,6 @@ export default () => {
       <MenuItem text="Dense" onClick={addNode} />
       <MenuItem text="Flatten" onClick={addNode} />
       <MenuItem text="Concatenate" onClick={addNode} />
-      <MenuItem text="SeperableConv1D" />
-      <MenuItem text="SeperableConv2D" />
     </Menu>
   );
   return (
@@ -65,10 +59,10 @@ export default () => {
           <Button className={Classes.MINIMAL} text="Pooling Layers" />
         </Popover>
         <Popover content={dropoutLayer} position={Position.BOTTOM}>
-          <Button className={Classes.MINIMAL} text="Dropout Layers" />
+          <Button className={Classes.MINIMAL} text="Regularizers" />
         </Popover>
         <Popover content={primLayer} position={Position.BOTTOM}>
-          <Button className={Classes.MINIMAL} text="Primitive Layers" />
+          <Button className={Classes.MINIMAL} text="NN Layers" />
         </Popover>
       </NavbarGroup>
     </Navbar>

@@ -59,7 +59,6 @@ io.on("connection", (socket) => {
 
   socket.on("trainModel", async (data) => {
     const dataset = new MnistData();
-    console.log(data);
     const {
       trainImages,
       trainLabels,

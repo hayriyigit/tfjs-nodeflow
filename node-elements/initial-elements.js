@@ -43,4 +43,28 @@ export const elements = {
     args: {},
     color: "#B4A7D6",
   },
+  BatchNorm: {
+    args: {},
+    color: "#93C47D",
+  },
+  SepConv2D: {
+    args: {
+      filters: 1,
+      kernelSize: 1,
+      strides: 1,
+      padding: "valid",
+      activation: "relu",
+      kernelInitializer: "heUniform",
+    },
+    color: "#E06666",
+  },
+  AvgPooling2D: {
+    args: {
+      poolSize: 1,
+      strides: 1,
+      padding: "valid",
+      dataFormat: "channelsFirst",
+    },
+    color: "#D9D9D9",
+  },
 };
